@@ -14,6 +14,10 @@ return [
         'controller' => 'User',
         'action' => 'login'
     ],
+    'api/validate_token' => [
+        'controller' => 'User',
+        'action' => 'validate'
+    ],
 ];
 
 

@@ -5,7 +5,6 @@ namespace application\controllers;
 use application\core\Controller;
 use \Firebase\JWT\JWT;
 
-
 class UserController extends Controller
 {
 
@@ -53,6 +52,37 @@ class UserController extends Controller
             echo json_encode(array("message" => "Login failed."));
         }
 
+    }
+
+    public function validateAction(){
+        require 'application/config/core.php';
+        $this->getHeaders();
+        $data = json_decode(file_get_contents("php://input"), true);
+
+
+        $jwt=isset($data['jwt']) ? $data['jwt'] : "";
+
+        if($jwt) {
+            try {
+                $decoded = JWT::decode($jwt, $key, array('HS256'));
+                http_response_code(200);
+                echo json_encode(array(
+                    "message" => "Access granted.",
+                    "data" => $decoded->data
+                ));
+            }
+            catch (Exception $e){
+                http_response_code(401);
+                echo json_encode(array(
+                    "message" => "Access denied.",
+                    "error" => $e->getMessage()
+                ));
+            }
+        }
+        else{
+            http_response_code(401);
+            echo json_encode(array("message" => "Access denied."));
+        }
     }
 
     public function validateDate($data){
